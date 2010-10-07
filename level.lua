@@ -59,7 +59,8 @@ function Level:draw()
 end
 
 function Level:update(dt)
-	-- pass
+	self.poligons:update(dt)
+	self.game.char:update(dt)
 end
 
 function Level:won( pos )

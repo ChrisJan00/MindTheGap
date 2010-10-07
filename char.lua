@@ -75,6 +75,6 @@ function Character:update(dt)
 
 	-- if i fall away from the screen, restart
 	if self.pos[2]>screensize[2] or self.pos[1]<0 or self.pos[1]>screensize[1] then
-		self.game.currentlevel:restart()
+		self.game.levels[self.game.current]:restart()
 	end
 end

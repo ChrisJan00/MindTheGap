@@ -21,44 +21,33 @@ Game = class(function(g)
 end)
 
 function Game:load()
+	self.levels = {
+		Level1(self),
+		Level2(self),
+		Level3(self),
+		Level4(self)
+	}
 
-	self.level1 = Level1(self)
-	self.level2 = Level2(self)
-	self.level3 = Level3(self)
-	self.level4 = Level4(self)
-	self.currentlevel = self.level1
+	self.current = 1
 	self.char = Character(self)
-
-
 end
 
 
 function Game:update(dt)
-	self.currentlevel.poligons:update(dt)
-	self.char:update(dt)
-	self.currentlevel:update(dt)
-
-	if self.currentlevel:won(self.char.pos) then
-		if self.currentlevel == self.level1 then
-			self.currentlevel = self.level2
-		elseif self.currentlevel == self.level2 then
-			self.currentlevel = self.level3
-		elseif self.currentlevel == self.level3 then
-			self.currentlevel = self.level4
-		end
-		self.currentlevel:restart()
+	self.levels[self.current]:update(dt)
+	if self.levels[self.current]:won(self.char.pos) then
+		self.current=self.current+1
+		self.levels[self.current]:restart()
 	end
+
 end
 
 function Game:draw()
-	self.currentlevel:draw()
---~ 	self.char:draw()
---~ 	self.currentlevel.poligons:draw()
-
+	self.levels[self.current]:draw()
 end
 
 function Game:checkCharStatus( charPos )
-	return self.currentlevel.poligons:checkCharStatus( charPos )
+	return self.levels[self.current].poligons:checkCharStatus( charPos )
 end
 
 
@@ -68,7 +57,7 @@ function Game:keypressed(key)
 	end
 
 	if key == " " then
-		self.currentlevel:restart()
+		self.levels[self.current]:restart()
 	end
 
 end
