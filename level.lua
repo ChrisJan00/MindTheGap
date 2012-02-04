@@ -44,7 +44,7 @@ Level = class(function(self,game)
 	self.initpos = Vector(100,0)
 	self.dir = Vector(1,0)
 	self.game = game
-	self.poligons = PlatformList()
+	self.poligons = MovablePlatformList()
 end)
 
 function Level:restart()
@@ -73,23 +73,20 @@ end
 
 Level1 = class(Level,function(self, game)
 	self._base.init(self,game)
---~ 	self.poligons = PlatformList()
+--~ 	self.poligons = MovablePlatformList()
 
-    self.poligons:append(Platform())
+    self.poligons:append(MovablePlatform())
 
-	local tt = Platform()
-	tt:set({0,0,200,0,200,20,0,20})
-	tt.pos[2]=400
+	local tt = MovablePlatform()
+	tt:set({0,400,200,20})
 	self.poligons:append(tt)
 
-	local t2 = Platform()
-	t2:set({0,0,300,0,300,30,0,30})
-	t2.pos[2]=455
-	t2.pos[1]=400
+	local t2 = MovablePlatform()
+	t2:set({400,455,300,30})
 	self.poligons:append(t2)
 
-	local t3 = Platform()
-	t3:set({0,0,40,0,40,140,0,140})
+	local t3 = MovablePlatform()
+	t3:set({0,0,40,140})
 	self.poligons:append(t3)
 end)
 
@@ -98,23 +95,20 @@ Level2 = class(Level,function(self, game)
 	self._base.init(self,game)
 	self.initpos = Vector(10,400)
 	self.goal.x = 100
---~ 	self.poligons = PlatformList()
+--~ 	self.poligons = MovablePlatformList()
 
-    self.poligons:append(Platform())
+    self.poligons:append(MovablePlatform())
 
-	local tt = Platform()
-	tt:set({0,0,200,0,200,20,0,20})
-	tt.pos[2]=400
+	local tt = MovablePlatform()
+	tt:set({0,400,200,20})
 	self.poligons:append(tt)
 
-	local t2 = Platform()
-	t2:set({0,0,300,0,300,30,0,30})
-	t2.pos[2]=455
-	t2.pos[1]=400
+	local t2 = MovablePlatform()
+	t2:set({400,455,300,30})
 	self.poligons:append(t2)
 
-	local t3 = Platform()
-	t3:set({0,0,40,0,40,140,0,140})
+	local t3 = MovablePlatform()
+	t3:set({0,0,140,40})
 	self.poligons:append(t3)
 end)
 
@@ -123,14 +117,12 @@ Level3 = class(Level,function(self, game)
 	self._base.init(self,game)
 	self.initpos = Vector(500,200)
 
-	local t1 = Platform()
-	t1:set({0,0,80,0,80,250,0,250})
+	local t1 = MovablePlatform()
+	t1:set({0,0,80,250})
+        self.poligons:append(t1)
 
-    self.poligons:append(t1)
-
-
-	local t3 = Platform()
-	t3:set({0,0,40,0,40,140,0,140})
+	local t3 = MovablePlatform()
+	t3:set({0,0,40,140})
 	self.poligons:append(t3)
 end)
 

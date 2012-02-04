@@ -33,15 +33,14 @@ end
 
 function Character:draw()
 	love.graphics.setColor(128,255,11)
-	love.graphics.rectangle("fill",self.pos[1] - 5, self.pos[2] - 10, 10, 10)
+	love.graphics.rectangle("fill",self.pos[1], self.pos[2], 10, 10)
 end
 
 function Character:update(dt)
-
 	-- movement
 	self.pos = self.pos:add(self.dir:smul(self.speed * dt))
 
-	local colRes = self.game:checkCharStatus( self.pos )
+	local colRes = self.game:checkCharStatus( self.pos, {10, 10} )
 	-- jump?
 	if not colRes[1] and self.standing then
 		self.dir[2] = self.jump
@@ -50,18 +49,20 @@ function Character:update(dt)
 	-- correct position on collision
 	if colRes[1] then
 		self.pos = colRes[2]
-		self.standing = true
+		if colRes[3][2] ~= 1 then
+		    self.standing = true
+		end
 	else
 		self.standing = false
 	end
 
 	-- stop by the floor
 	if colRes[1] and colRes[3][2]~=0 then
-		self.dir[2] = 0
+	    self.dir[2] = 0
 	end
 
 	-- freefall
-	if not colRes[1] then
+	if not standing then
 		self.dir[2] = self.dir[2]+self.grav*dt
 	end
 

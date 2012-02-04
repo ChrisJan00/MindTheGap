@@ -46,8 +46,8 @@ function Game:draw()
 	self.levels[self.current]:draw()
 end
 
-function Game:checkCharStatus( charPos )
-	return self.levels[self.current].poligons:checkCharStatus( charPos )
+function Game:checkCharStatus( charPos, charSize )
+	return self.levels[self.current].poligons:checkCharStatus( charPos, charSize )
 end
 
 
