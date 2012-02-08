@@ -42,10 +42,20 @@ function Character:update(dt)
 
 	local colRes = self.game:checkCharStatus( self.pos, {10, 10} )
 	-- jump?
-	if not colRes[1] and self.standing then
+	self.lastStandingPlatform = self.standingPlatform
+	self.standingPlatform = colRes[4]
+	if not colRes[1] and self.standing and self.lastStandingPlatform then
+	    if self.lastStandingPlatform:moved() then
+		self.lastStandingPlatform:resetMoved()
+	    else
 		self.dir[2] = self.jump
+	    end
 	end
-
+	
+	if self.standingPlatform and self.standingPlatform ~= self.lastStandingPlatform and self.standingPlatform:moved() then
+	    self.standingPlatform:resetMoved()
+	end
+	
 	-- correct position on collision
 	if colRes[1] then
 		self.pos = colRes[2]

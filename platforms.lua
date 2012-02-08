@@ -26,6 +26,7 @@ MovablePlatform = class(function(self)
     self.dragging = false
     self.mouseDown = false
     self.transparent = false
+    self.wasMoved = false
 end)
 
 function MovablePlatform:set(ps)
@@ -77,6 +78,7 @@ end
 
 function MovablePlatform:stopDrag()
 	self.dragging = false
+	self.wasMoved = true
 end
 
 --- collision: assume all platforms are rectangles by now
@@ -140,6 +142,14 @@ function MovablePlatform:correctedPos( pos, size )
     end
 end
 
+function MovablePlatform:moved()
+    return self.wasMoved
+end
+
+function MovablePlatform:resetMoved()
+    self.wasMoved = false
+end
+
 
 --------------------------------------------------------------------------
 
@@ -174,15 +184,19 @@ function MovablePlatformList:checkCharStatus( pos, size )
     local result = {}
     local newnormal = Vector(0,0)
     local endres = false
+    local lastStandingPlatform = nil
     while elem do
 	result = elem:correctedPos( newpos, size )
 	if result[1] then
 	    newpos = result[2]
+	    if result[3][1]==0 and result[3][2]==-1 then
+		lastStandingPlatform = elem
+	    end
 	    newnormal = newnormal:add( result[3] )
 	    endres = true
 --~ 	return elem:correctedPos( pos )
 	end
 	elem = self.list:getNext()
     end
-    return {endres,newpos,newnormal}
+    return {endres,newpos,newnormal, lastStandingPlatform}
 end
