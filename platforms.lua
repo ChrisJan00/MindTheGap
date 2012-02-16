@@ -88,6 +88,28 @@ function StaticPlatform:correctedPos( pos, size )
     end
 end
 
+function StaticPlatform:correctedPosForRects( pos, size )
+    if not self:collidedBase( pos, size ) then
+	return { false, pos, Vector(0,0) }
+    else
+        local n = self:normal( pos )
+	local cp = Vector( pos[1], pos[2] )
+	if n[1]==1 then
+	    cp[1] = self.pos[1]+self.size[1]
+	end
+	if n[1]==-1 then
+	    cp[1] = self.pos[1]-size[1]
+	end
+	if n[2]==-1 then
+	    cp[2] = self.pos[2]-size[2]
+	end
+	if n[2]==1 then
+	    cp[2] = self.size[2]+self.pos[2]
+	end
+	return { true, cp, n }
+    end
+end
+
 function StaticPlatform:moved()
     return false
 end
@@ -131,7 +153,12 @@ function MovablePlatform:update(dt)
     local mx,my = love.mouse.getX(), love.mouse.getY()
     local md = love.mouse.isDown("l")
     if self.dragging then
+	self.oldPos = Vector(self.currentPos[1], self.currentPos[2])
 	self.currentPos = Vector(self.pos[1]+mx-self.dragPos[1], self.pos[2]+my-self.dragPos[2])
+	local collided = game.levels[game.current].fixedPlatforms:checkRectangleCollision(self)
+	if collided then
+	    self.currentPos = Vector(collided[1],collided[2])
+	end
 	if not md then
 	    self:stopDrag()
 	    self.pos = Vector(self.currentPos[1], self.currentPos[2]);
@@ -247,4 +274,17 @@ function MovablePlatformList:checkCharStatus( pos, size )
 	elem = self.list:getNext()
     end
     return {endres,newpos,newnormal, lastStandingPlatform}
+end
+
+function MovablePlatformList:checkRectangleCollision( platform )
+    local elem = self.list:getFirst()
+    local result = {}
+    while elem do
+	result = elem:correctedPosForRects( platform.currentPos, platform.size )
+	if result[1] then
+	    return result[2]
+	end
+	elem = self.list:getNext()
+    end
+    return false
 end

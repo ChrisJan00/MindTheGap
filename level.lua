@@ -45,6 +45,7 @@ Level = class(function(self,game)
 	self.dir = Vector(1,0)
 	self.game = game
 	self.poligons = MovablePlatformList()
+	self.fixedPlatforms = MovablePlatformList()
 end)
 
 function Level:restart()
@@ -92,6 +93,11 @@ Level1 = class(Level,function(self, game)
 	local t4 = StaticPlatform()
 	t4:set({100,450,200,40})
 	self.poligons:append(t4)
+	
+	local t5 = StaticPlatform()
+	t5:set({300,200,40,40})
+	self.poligons:append(t5)
+	self.fixedPlatforms:append(t5)
 end)
 
 
