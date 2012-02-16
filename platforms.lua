@@ -16,12 +16,90 @@
 --     You should have received a copy of the GNU General Public License
 --     along with Mind The Gap  If not, see <http://www.gnu.org/licenses/>.
 
--- fixed platform:  cannot be moved
 -- solid platform: you can't even move platforms across it
 
-MovablePlatform = class(function(self)
+StaticPlatform = class(function(self)
     self.pos = Vector(200, 200)
     self.size = Vector(100, 100)
+end)
+
+function StaticPlatform:set(ps)
+    self.pos = Vector(ps[1], ps[2])
+    self.size = Vector(ps[3], ps[4])
+end
+
+function StaticPlatform:draw()
+    love.graphics.setLineWidth(2)
+    love.graphics.setColor(155, 55, 255)
+    love.graphics.rectangle("fill", self.pos[1], self.pos[2], self.size[1], self.size[2])
+end
+
+function StaticPlatform:update(dt)
+    -- nothing
+end
+
+function StaticPlatform:collidedBase(pos, size)
+    if pos[1]+size[1] < self.pos[1] then return false end
+    if pos[1] > self.size[1]+self.pos[1] then return false end
+    if pos[2]+size[2] < self.pos[2] then return false end
+    if pos[2] > self.size[2]+self.pos[2] then return false end
+    return true
+end
+
+-- returns the normal of the platform at position pos
+function StaticPlatform:normal(pos)
+    local mx,my = pos[1], pos[2]
+    -- top border: 10 pixels tall
+    if my<=self.pos[2]+10 then
+	return Vector(0,-1)
+    end
+    -- side borders
+    if mx<=self.pos[1]+10 then
+	return Vector(-1,0)
+    end
+    if mx>=self.pos[1]+self.size[1]-10 then
+	return Vector(1,0)
+    end
+    return Vector(0,1)
+end
+
+-- this function checks if pos collides with the platform
+-- if it does, returns { true, newpos, normal }
+-- if not, returns { false, pos, 00 }
+function StaticPlatform:correctedPos( pos, size )
+    if not self:collidedBase( pos, size ) then
+	return { false, pos, Vector(0,0) }
+    else
+        local n = self:normal( pos )
+	local cp = Vector( pos[1], pos[2] )
+	if n[1]==1 then
+	    cp[1] = self.pos[1]+self.size[1]
+	end
+	if n[1]==-1 then
+	    cp[1] = self.pos[1]-size[1]
+	end
+	if n[2]==-1 then
+	    cp[2] = self.pos[2]-size[2]
+	end
+	if n[2]==1 then
+	    cp[2] = self.size[2]+self.pos[2]
+	end
+	return { true, cp, n }
+    end
+end
+
+function StaticPlatform:moved()
+    return false
+end
+
+function StaticPlatform:resetMoved()
+    -- nothing
+end
+
+--------------------------------------------------------------------------
+
+MovablePlatform = class(StaticPlatform, function(self)
+    self._base.init(self)
     self.currentPos = Vector(200, 200)
     self.dragging = false
     self.mouseDown = false
@@ -30,8 +108,9 @@ MovablePlatform = class(function(self)
 end)
 
 function MovablePlatform:set(ps)
-    self.pos = Vector(ps[1], ps[2])
-    self.size = Vector(ps[3], ps[4])
+    self._base:set(ps)
+    self.pos = self._base.pos
+    self.size = self._base.size
     self.currentPos = Vector(ps[1], ps[2])
 end
 
@@ -92,56 +171,6 @@ function MovablePlatform:collidedCurrent(pos)
     return true
 end
 
-function MovablePlatform:collidedBase(pos, size)
-    if pos[1]+size[1] < self.pos[1] then return false end
-    if pos[1] > self.size[1]+self.pos[1] then return false end
-    if pos[2]+size[2] < self.pos[2] then return false end
-    if pos[2] > self.size[2]+self.pos[2] then return false end
-    return true
-end
-
--- returns the normal of the platform at position pos
-function MovablePlatform:normal(pos)
-    local mx,my = pos[1], pos[2]
-    -- top border: 10 pixels tall
-    if my<=self.pos[2]+10 then
-	return Vector(0,-1)
-    end
-    -- side borders
-    if mx<=self.pos[1]+10 then
-	return Vector(-1,0)
-    end
-    if mx>=self.pos[1]+self.size[1]-10 then
-	return Vector(1,0)
-    end
-    return Vector(0,1)
-end
-
--- this function checks if pos collides with the platform
--- if it does, returns { true, newpos, normal }
--- if not, returns { false, pos, 00 }
-function MovablePlatform:correctedPos( pos, size )
-    if not self:collidedBase( pos, size ) then
-	return { false, pos, Vector(0,0) }
-    else
-        local n = self:normal( pos )
-	local cp = Vector( pos[1], pos[2] )
-	if n[1]==1 then
-	    cp[1] = self.pos[1]+self.size[1]
-	end
-	if n[1]==-1 then
-	    cp[1] = self.pos[1]-size[1]
-	end
-	if n[2]==-1 then
-	    cp[2] = self.pos[2]-size[2]
-	end
-	if n[2]==1 then
-	    cp[2] = self.size[2]+self.pos[2]
-	end
-	return { true, cp, n }
-    end
-end
-
 function MovablePlatform:moved()
     return self.wasMoved
 end
@@ -150,6 +179,25 @@ function MovablePlatform:resetMoved()
     self.wasMoved = false
 end
 
+--------------------------------------------------------------------------
+-- TODOs
+-- Solid Platform: superclass of Static Platform
+-- but the movable platforms collide with it
+-- not only that, but you can't cross through
+-- that means that the mouse position is actually a kind of rubber band
+
+-- Kill platform: kills on contact
+-- Bouncing platform: makes the character bounce
+
+-- graphics for the character and the goal
+-- choose colors
+
+-- opti: use grid for platform collisions instead of list
+
+-- When that is done I will need a (simple) level editor
+-- and to choose the colors better
+-- and a background?
+-- and music?
 
 --------------------------------------------------------------------------
 

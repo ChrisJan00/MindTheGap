@@ -88,6 +88,10 @@ Level1 = class(Level,function(self, game)
 	local t3 = MovablePlatform()
 	t3:set({0,0,40,140})
 	self.poligons:append(t3)
+	
+	local t4 = StaticPlatform()
+	t4:set({100,450,200,40})
+	self.poligons:append(t4)
 end)
 
 
