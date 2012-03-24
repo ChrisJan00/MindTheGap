@@ -21,11 +21,17 @@
 StaticPlatform = class(function(self)
     self.pos = Vector(200, 200)
     self.size = Vector(100, 100)
+	self.originalPos = Vector(200, 200)
 end)
 
 function StaticPlatform:set(ps)
     self.pos = Vector(ps[1], ps[2])
     self.size = Vector(ps[3], ps[4])
+	self.originalPos = Vector(ps[1], ps[2])
+end
+
+function StaticPlatform:reset()
+	self.pos = Vector(self.originalPos[1], self.originalPos[2])
 end
 
 function StaticPlatform:draw()
@@ -96,6 +102,31 @@ function StaticPlatform:resetMoved()
     -- nothing
 end
 
+function StaticPlatform:isKill()
+    return false
+end
+
+-- TODO
+function StaticPlatform:registerGrid(grid)
+    self.grid = grid
+end
+
+--------------------------------------------------------------------------
+
+KillPlatform = class(StaticPlatform, function(self) 
+    self._base.init(self)
+end)
+
+function KillPlatform:draw()
+    love.graphics.setLineWidth(2)
+    love.graphics.setColor(255, 155, 55)
+    love.graphics.rectangle("fill", self.pos[1], self.pos[2], self.size[1], self.size[2])
+end
+
+function KillPlatform:isKill()
+    return true
+end
+
 --------------------------------------------------------------------------
 
 MovablePlatform = class(StaticPlatform, function(self)
@@ -109,9 +140,18 @@ end)
 
 function MovablePlatform:set(ps)
     self._base:set(ps)
+	self.dragging = false
+    self.mouseDown = false
+    self.transparent = false
+    self.wasMoved = false
     self.pos = self._base.pos
     self.size = self._base.size
+	self.originalPos = self._base.originalPos
     self.currentPos = Vector(ps[1], ps[2])
+end
+
+function MovablePlatform:reset()
+	self:set({self.originalPos[1], self.originalPos[2], self.size[1], self.size[2]})
 end
 
 function MovablePlatform:draw()
@@ -179,15 +219,13 @@ function MovablePlatform:resetMoved()
     self.wasMoved = false
 end
 
+-- TODO
+function MovablePlatform:moveInGrid(newPos)
+    
+end
+
 --------------------------------------------------------------------------
 -- TODOs
--- Solid Platform: superclass of Static Platform
--- but the movable platforms collide with it
--- not only that, but you can't cross through
--- that means that the mouse position is actually a kind of rubber band
-
--- Kill platform: kills on contact
--- Bouncing platform: makes the character bounce
 
 -- graphics for the character and the goal
 -- choose colors
@@ -233,6 +271,7 @@ function MovablePlatformList:checkCharStatus( pos, size )
     local newnormal = Vector(0,0)
     local endres = false
     local lastStandingPlatform = nil
+    local isKill = false
     while elem do
 	result = elem:correctedPos( newpos, size )
 	if result[1] then
@@ -242,9 +281,21 @@ function MovablePlatformList:checkCharStatus( pos, size )
 	    end
 	    newnormal = newnormal:add( result[3] )
 	    endres = true
+	    
+	    if elem:isKill() then
+		isKill = true
+	    end
 --~ 	return elem:correctedPos( pos )
 	end
 	elem = self.list:getNext()
     end
-    return {endres,newpos,newnormal, lastStandingPlatform}
+    return {endres, newpos, newnormal, lastStandingPlatform, isKill}
+end
+
+function MovablePlatformList:reset()
+	local elem = self.list:getFirst()
+	while elem do
+		elem:reset()
+		elem = self.list:getNext()
+	end
 end

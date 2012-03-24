@@ -34,7 +34,7 @@ function love.load()
 	love.filesystem.require("char.lua")
 	love.filesystem.require("level.lua")
 	love.filesystem.require("game.lua")
-
+	love.filesystem.require("editor.lua")
 
 
 	-- Initialization
@@ -63,44 +63,69 @@ function love.load()
 --~ 	love.graphics.setFont(love.graphics.newImageFont("computerliebe.png",
 --~ 	"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ") )
 
+	editorEnabled = true
+	
 	game = Game()
 	game:load()
 
+	editor = Editor()
+	editor:load()
 end
 
 function love.update(dt)
 
-	game:update(dt)
-
+	if editorEnabled then
+	    editor:update(dt)
+	else
+	    game:update(dt)
+	end
 end
 
 
 function love.draw()
-	game:draw()
-	love.graphics.setColorMode("modulate")
+	if editorEnabled then
+	    editor:draw()
+	else 
+	    game:draw()
+	end
+	--love.graphics.setColorMode("modulate")
 end
 
 
 function love.keypressed(key)
-	game:keypressed(key)
+	if editorEnabled then
+	    editor:keypressed(key)
+	else
+	    game:keypressed(key)
+	end
 end
 
 
 function love.keyreleased(key)
-	game:keyreleased(key)
+    if editorEnabled then
+        editor:keyreleased(key)
+    else
+        game:keyreleased(key)
+    end
 end
 
 
 function love.mousepressed(x, y, button)
+    if editorEnabled then
+	editor:mousepressed(x,y,button)
+    else
 	game:mousepressed(x,y,button)
-
+    end
 end
 
 
 
 function love.mousereleased(x, y, button)
+    if editorEnabled then
+	editor:mousereleased(x,y, button)
+    else
 	game:mousereleased(x,y, button)
-
+    end
 end
 
 

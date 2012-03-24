@@ -50,6 +50,9 @@ end)
 function Level:restart()
 	self.game.char.pos = self.initpos
 	self.game.char.dir = Vector(1,0)
+	self.game.char.standing = false
+	self.game.char.standingPlatform = nil
+	self.poligons:reset()
 end
 
 function Level:draw()
@@ -71,27 +74,35 @@ function Level:won( pos )
 	end
 end
 
+function Level:addMovablePlatform(_x, _y, _w, _h)
+    local plat = MovablePlatform()
+    plat:set({_x,_y,_w,_h})
+    self.poligons:append(plat)
+end
+
+function Level:addKillPlatform(_x, _y, _w, _h)
+    local plat = KillPlatform()
+    plat:set({_x,_y,_w,_h})
+    self.poligons:append(plat)
+end
+
+function Level:addStaticPlatform(_x, _y, _w, _h)
+    local plat = StaticPlatform()
+    plat:set({_x,_y,_w,_h})
+    self.poligons:append(plat)
+end
+
+
+
 Level1 = class(Level,function(self, game)
 	self._base.init(self,game)
---~ 	self.poligons = MovablePlatformList()
-
-    self.poligons:append(MovablePlatform())
-
-	local tt = MovablePlatform()
-	tt:set({0,400,200,20})
-	self.poligons:append(tt)
-
-	local t2 = MovablePlatform()
-	t2:set({400,455,300,30})
-	self.poligons:append(t2)
-
-	local t3 = MovablePlatform()
-	t3:set({0,0,40,140})
-	self.poligons:append(t3)
 	
-	local t4 = StaticPlatform()
-	t4:set({100,450,200,40})
-	self.poligons:append(t4)
+	self:addMovablePlatform(200, 200, 100, 100)
+	self:addMovablePlatform(0, 400, 200, 20)
+	self:addMovablePlatform(400, 455, 300, 30)
+	self:addMovablePlatform(0, 0, 40, 140)
+	self:addStaticPlatform(100, 450, 200, 40)
+	self:addKillPlatform(300, 220, 40, 40)
 end)
 
 

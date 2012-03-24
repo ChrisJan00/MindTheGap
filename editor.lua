@@ -16,66 +16,57 @@
 --     You should have received a copy of the GNU General Public License
 --     along with Mind The Gap  If not, see <http://www.gnu.org/licenses/>.
 
-Game = class(function(g)
+Editor = class(function(g)
 	g:load()
 end)
 
-function Game:load()
-	self.levels = {
-		Level1(self),
-		Level2(self),
-		Level3(self),
-		Level4(self)
-	}
-
+function Editor:load()
+	self.level = Level1(self)
 	self.current = 1
 	self.char = Character(self)
+	self.simulating = false
 end
 
-function Game:restart()
-	self.levels[self.current]:restart()
+function Editor:restart()
+	self.level:restart()
 end
 
-function Game:update(dt)
-	self.levels[self.current]:update(dt)
-	if self.levels[self.current]:won(self.char.pos) then
-		self.current=self.current+1
-		self.levels[self.current]:restart()
+function Editor:update(dt)
+	if self.simulating then
+		self.level:update(dt)
 	end
 end
 
-function Game:draw()
-	self.levels[self.current]:draw()
+function Editor:draw()
+	self.level:draw()
 end
 
-function Game:checkCharStatus( charPos, charSize )
-	return self.levels[self.current].poligons:checkCharStatus( charPos, charSize )
+function Editor:checkCharStatus( charPos, charSize )
+	return self.level.poligons:checkCharStatus( charPos, charSize )
 end
 
 
-function Game:keypressed(key)
+function Editor:keypressed(key)
 	if key == "escape" then
 		quit()
 	end
-
-	if key == " " then
-		self.levels[self.current]:restart()
+	if key == "f2" then
+		self.simulating = not self.simulating
 	end
-
+	if key == "f3" then
+		self.level:restart()
+	end
 end
 
 
-function Game:keyreleased(key)
+function Editor:keyreleased(key)
 end
 
-
-function Game:mousepressed(x, y, button)
+function Editor:mousepressed(x, y, button)
 
 end
 
-
-
-function Game:mousereleased(x, y, button)
+function Editor:mousereleased(x, y, button)
 
 end
 
