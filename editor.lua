@@ -16,11 +16,11 @@
 --     You should have received a copy of the GNU General Public License
 --     along with Mind The Gap  If not, see <http://www.gnu.org/licenses/>.
 
-Game = class(function(g)
+Editor = class(function(g)
 	g:load()
 end)
 
-function Game:load()
+function Editor:load()
 	self.levels = {
 		Level1(self),
 		Level2(self),
@@ -33,24 +33,25 @@ function Game:load()
 end
 
 
-function Game:update(dt)
+function Editor:update(dt)
 	self.levels[self.current]:update(dt)
 	if self.levels[self.current]:won(self.char.pos) then
 		self.current=self.current+1
 		self.levels[self.current]:restart()
 	end
+
 end
 
-function Game:draw()
+function Editor:draw()
 	self.levels[self.current]:draw()
 end
 
-function Game:checkCharStatus( charPos, charSize )
+function Editor:checkCharStatus( charPos, charSize )
 	return self.levels[self.current].poligons:checkCharStatus( charPos, charSize )
 end
 
 
-function Game:keypressed(key)
+function Editor:keypressed(key)
 	if key == "escape" then
 		quit()
 	end
@@ -62,17 +63,17 @@ function Game:keypressed(key)
 end
 
 
-function Game:keyreleased(key)
+function Editor:keyreleased(key)
 end
 
 
-function Game:mousepressed(x, y, button)
+function Editor:mousepressed(x, y, button)
 
 end
 
 
 
-function Game:mousereleased(x, y, button)
+function Editor:mousereleased(x, y, button)
 
 end
 
