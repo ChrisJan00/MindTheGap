@@ -63,7 +63,7 @@ function love.load()
 --~ 	love.graphics.setFont(love.graphics.newImageFont("computerliebe.png",
 --~ 	"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ") )
 
-	editorEnabled = true
+	-- editorEnabled = true
 	
 	game = Game()
 	game:load()
