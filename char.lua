@@ -98,6 +98,8 @@ function Character:update(dt)
 end
 
 function Character:kill()
+	self.standing = false
+	self.standingPlatform = nil
     self.game.levels[self.game.current]:restart()
 end
 
