@@ -100,6 +100,11 @@ function StaticPlatform:isKill()
     return false
 end
 
+-- TODO
+function StaticPlatform:registerGrid(grid)
+    self.grid = grid
+end
+
 --------------------------------------------------------------------------
 
 KillPlatform = class(StaticPlatform, function(self) 
@@ -199,10 +204,13 @@ function MovablePlatform:resetMoved()
     self.wasMoved = false
 end
 
+-- TODO
+function MovablePlatform:moveInGrid(newPos)
+    
+end
+
 --------------------------------------------------------------------------
 -- TODOs
-
--- Kill platform: kills on contact
 
 -- graphics for the character and the goal
 -- choose colors
