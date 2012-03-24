@@ -41,6 +41,13 @@ function Character:update(dt)
 	self.pos = self.pos:add(self.dir:smul(self.speed * dt))
 
 	local colRes = self.game:checkCharStatus( self.pos, {10, 10} )
+	
+	-- kill?
+	if colRes[5] then
+	    self:kill()
+	    return
+	end
+	
 	-- jump?
 	self.lastStandingPlatform = self.standingPlatform
 	self.standingPlatform = colRes[4]
@@ -86,6 +93,11 @@ function Character:update(dt)
 
 	-- if i fall away from the screen, restart
 	if self.pos[2]>screensize[2] or self.pos[1]<0 or self.pos[1]>screensize[1] then
-		self.game.levels[self.game.current]:restart()
+		self:kill()
 	end
 end
+
+function Character:kill()
+    self.game.levels[self.game.current]:restart()
+end
+

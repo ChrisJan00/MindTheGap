@@ -96,6 +96,26 @@ function StaticPlatform:resetMoved()
     -- nothing
 end
 
+function StaticPlatform:isKill()
+    return false
+end
+
+--------------------------------------------------------------------------
+
+KillPlatform = class(StaticPlatform, function(self) 
+    self._base.init(self)
+end)
+
+function KillPlatform:draw()
+    love.graphics.setLineWidth(2)
+    love.graphics.setColor(255, 155, 55)
+    love.graphics.rectangle("fill", self.pos[1], self.pos[2], self.size[1], self.size[2])
+end
+
+function KillPlatform:isKill()
+    return true
+end
+
 --------------------------------------------------------------------------
 
 MovablePlatform = class(StaticPlatform, function(self)
@@ -181,13 +201,8 @@ end
 
 --------------------------------------------------------------------------
 -- TODOs
--- Solid Platform: superclass of Static Platform
--- but the movable platforms collide with it
--- not only that, but you can't cross through
--- that means that the mouse position is actually a kind of rubber band
 
 -- Kill platform: kills on contact
--- Bouncing platform: makes the character bounce
 
 -- graphics for the character and the goal
 -- choose colors
@@ -233,6 +248,7 @@ function MovablePlatformList:checkCharStatus( pos, size )
     local newnormal = Vector(0,0)
     local endres = false
     local lastStandingPlatform = nil
+    local isKill = false
     while elem do
 	result = elem:correctedPos( newpos, size )
 	if result[1] then
@@ -242,9 +258,13 @@ function MovablePlatformList:checkCharStatus( pos, size )
 	    end
 	    newnormal = newnormal:add( result[3] )
 	    endres = true
+	    
+	    if elem:isKill() then
+		isKill = true
+	    end
 --~ 	return elem:correctedPos( pos )
 	end
 	elem = self.list:getNext()
     end
-    return {endres,newpos,newnormal, lastStandingPlatform}
+    return {endres, newpos, newnormal, lastStandingPlatform, isKill}
 end

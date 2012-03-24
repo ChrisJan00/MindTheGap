@@ -92,6 +92,10 @@ Level1 = class(Level,function(self, game)
 	local t4 = StaticPlatform()
 	t4:set({100,450,200,40})
 	self.poligons:append(t4)
+	
+	local t5 = KillPlatform()
+	t5:set({200,200,40,40})
+	self.poligons:append(t5)
 end)
 
 
