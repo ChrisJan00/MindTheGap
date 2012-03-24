@@ -32,6 +32,9 @@ function Game:load()
 	self.char = Character(self)
 end
 
+function Game:restart()
+	self.levels[self.current]:restart()
+end
 
 function Game:update(dt)
 	self.levels[self.current]:update(dt)

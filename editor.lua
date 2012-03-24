@@ -21,33 +21,28 @@ Editor = class(function(g)
 end)
 
 function Editor:load()
-	self.levels = {
-		Level1(self),
-		Level2(self),
-		Level3(self),
-		Level4(self)
-	}
-
+	self.level = Level1(self)
 	self.current = 1
 	self.char = Character(self)
+	self.simulating = false
 end
 
+function Editor:restart()
+	self.level:restart()
+end
 
 function Editor:update(dt)
-	self.levels[self.current]:update(dt)
-	if self.levels[self.current]:won(self.char.pos) then
-		self.current=self.current+1
-		self.levels[self.current]:restart()
+	if self.simulating then
+		self.level:update(dt)
 	end
-
 end
 
 function Editor:draw()
-	self.levels[self.current]:draw()
+	self.level:draw()
 end
 
 function Editor:checkCharStatus( charPos, charSize )
-	return self.levels[self.current].poligons:checkCharStatus( charPos, charSize )
+	return self.level.poligons:checkCharStatus( charPos, charSize )
 end
 
 
@@ -55,23 +50,21 @@ function Editor:keypressed(key)
 	if key == "escape" then
 		quit()
 	end
-
-	if key == " " then
-		self.levels[self.current]:restart()
+	if key == "f2" then
+		self.simulating = not self.simulating
 	end
-
+	if key == "f3" then
+		self.level:restart()
+	end
 end
 
 
 function Editor:keyreleased(key)
 end
 
-
 function Editor:mousepressed(x, y, button)
 
 end
-
-
 
 function Editor:mousereleased(x, y, button)
 

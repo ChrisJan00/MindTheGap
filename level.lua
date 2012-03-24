@@ -50,6 +50,9 @@ end)
 function Level:restart()
 	self.game.char.pos = self.initpos
 	self.game.char.dir = Vector(1,0)
+	self.game.char.standing = false
+	self.game.char.standingPlatform = nil
+	self.poligons:reset()
 end
 
 function Level:draw()
@@ -99,7 +102,7 @@ Level1 = class(Level,function(self, game)
 	self:addMovablePlatform(400, 455, 300, 30)
 	self:addMovablePlatform(0, 0, 40, 140)
 	self:addStaticPlatform(100, 450, 200, 40)
-	self:addKillPlatform(200, 200, 40, 40)
+	self:addKillPlatform(300, 220, 40, 40)
 end)
 
 

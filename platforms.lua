@@ -21,11 +21,17 @@
 StaticPlatform = class(function(self)
     self.pos = Vector(200, 200)
     self.size = Vector(100, 100)
+	self.originalPos = Vector(200, 200)
 end)
 
 function StaticPlatform:set(ps)
     self.pos = Vector(ps[1], ps[2])
     self.size = Vector(ps[3], ps[4])
+	self.originalPos = Vector(ps[1], ps[2])
+end
+
+function StaticPlatform:reset()
+	self.pos = Vector(self.originalPos[1], self.originalPos[2])
 end
 
 function StaticPlatform:draw()
@@ -134,9 +140,18 @@ end)
 
 function MovablePlatform:set(ps)
     self._base:set(ps)
+	self.dragging = false
+    self.mouseDown = false
+    self.transparent = false
+    self.wasMoved = false
     self.pos = self._base.pos
     self.size = self._base.size
+	self.originalPos = self._base.originalPos
     self.currentPos = Vector(ps[1], ps[2])
+end
+
+function MovablePlatform:reset()
+	self:set({self.originalPos[1], self.originalPos[2], self.size[1], self.size[2]})
 end
 
 function MovablePlatform:draw()
@@ -275,4 +290,12 @@ function MovablePlatformList:checkCharStatus( pos, size )
 	elem = self.list:getNext()
     end
     return {endres, newpos, newnormal, lastStandingPlatform, isKill}
+end
+
+function MovablePlatformList:reset()
+	local elem = self.list:getFirst()
+	while elem do
+		elem:reset()
+		elem = self.list:getNext()
+	end
 end
