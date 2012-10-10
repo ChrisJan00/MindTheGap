@@ -116,6 +116,12 @@ Level2 = class(Level,function(self, game)
 	local t3 = Platform()
 	t3:set({0,0,40,0,40,140,0,140})
 	self.poligons:append(t3)
+
+	local t4 = Platform()
+	t4:set({0,0,20,0,20,140,0,140})
+	t4.pos[1] = 500
+	t4.pos[2] = 120
+	self.poligons:append(t4)
 end)
 
 
